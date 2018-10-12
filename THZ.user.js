@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name THZ
 // @namespace THZ
-// @version 20181006.09
+// @version 20181012.01
 // @description THZ for myself
 // @homepageURL https://greasyfork.org/zh-CN/users/186552-wotmcaishiguachazhe
 // @require http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js
