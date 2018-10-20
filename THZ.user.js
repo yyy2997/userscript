@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name THZ
 // @namespace THZ
-// @version 20181012.02
+// @version 20181020.01
 // @description THZ for myself
 // @homepageURL https://greasyfork.org/zh-CN/users/186552-wotmcaishiguachazhe
 // @require http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js
@@ -12,15 +12,15 @@
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 $(document).ready(function() {
-    if (document.title.indexOf('thz.la') != -1) {
-        var linkNode = $('p.attnm > a');
-        if (linkNode.length != 0) {
-            var orginLink = linkNode.attr('href');
-            var pureLink = 'forum.php?mod=attachment&' + orginLink.substring(orginLink.indexOf('?') + 1);;
-            linkNode.attr('href', pureLink);
-            linkNode.removeAttr('onclick');
-        }
-    }
+//     if (document.title.indexOf('thz.la') != -1) {
+//         var linkNode = $('p.attnm > a');
+//         if (linkNode.length != 0) {
+//             var orginLink = linkNode.attr('href');
+//             var pureLink = 'forum.php?mod=attachment&' + orginLink.substring(orginLink.indexOf('?') + 1);;
+//             linkNode.attr('href', pureLink);
+//             linkNode.removeAttr('onclick');
+//         }
+//     }
 
     if (document.title.indexOf('AVMOO') != -1) {
         linkNode = $('.info').find('span:eq(1)');
@@ -310,6 +310,78 @@ $(document).ready(function() {
             });
         }
     }
+
+
+
+
+if (document.title.indexOf('thz.la') != -1 && document.title.indexOf('亚洲有碼原創') != -1) {
+    if ($("#threadlisttableid").length > 0) {
+        if (confirm("Press a button!")) {
+            var htmlStr11 = $('#threadlisttableid').html();
+            htmlStr11 = htmlStr11.replace(/<tbody.{1,30}>/g, "").replace(/<tbody>/g, "").replace(/<\/tbody>/g, "");
+            htmlStr11 = htmlStr11.replace(/<input.{1,50}>/g, "");
+
+            $('#threadlisttableid').replaceWith("<table summary=\"forum_220\" cellspacing=\"0\" cellpadding=\"0\" id=\"threadlisttableid\">" + htmlStr11 + "</table>");
+            htmlStr11 = $("#threadlisttableid").html();
+
+            $(htmlStr11).find('tr').each(function() {
+                var src = $(this).find('td.icn').find('img').attr('src');
+
+                if (src && src.indexOf('folder_common.gif') != -1) {
+                    var xst = $(this).find('th.common').find('a.xst');
+                    var txt = xst.text();
+                    var hrf = xst.attr('href');
+                    //txt = txt.match(/\[[a-zA-Z0-9-]+\]/);
+                    txt = txt.substring(txt.indexOf('[') + 1, txt.indexOf(']'));
+                    //console.log(txt);
+
+                    link = "http://192.168.0.18/?search=" + txt + "|" + txt.replace("-", "");
+                    console.log(link);
+
+                    GM_xmlhttpRequest({
+                        method: "GET",
+                        url: link,
+                        onload: function(result) {
+                            var doc = Common.parsetext(result.responseText);
+                            if ($(doc).find(".numresults").text() == "0 个结果") {
+                                window.open("http://thzu.net/" + hrf);
+                            }
+                        },
+                        onerror: function(e) {
+                            console.log(e);
+                        }
+                    }); //end  GM_xmlhttpRequest
+                }
+            });
+        }
+    }
+}
+
+if (document.title.indexOf('thz.la') != -1) {
+    widthauto(document.getElementById('switchblind'));
+    var linkNode = $('p.attnm > a');
+    if (linkNode.length != 0) {
+        var orginLink = linkNode.attr('href');
+        var pureLink = 'forum.php?mod=attachment&' + orginLink.substring(orginLink.indexOf('?') + 1);;
+        linkNode.attr('href', pureLink);
+        linkNode.removeAttr('onclick');
+    }
+
+    title = document.title;
+    title = title.substring(title.indexOf('[') + 1, title.indexOf(']'));
+    console.log(title);
+
+    Common.addAvImg(title, function($img) {
+        var divEle = $("div[class='pattl'] + table");
+        if (divEle) {
+            $(divEle).replaceWith($img);
+        }
+    });
+
+}
+
+
+
 });
 
 
